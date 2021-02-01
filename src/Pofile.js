@@ -1,26 +1,59 @@
 import React, { useEffect, useState } from "react";
 import { Button, Card } from "react-bootstrap";
 
-const Profile = ({ token, saveToken }) => {
+const Profile = () => {
+  const token = localStorage.getItem("token");
   const [{ name, email }, setUser] = useState({});
 
   useEffect(() => {
-    fetch("http://localhost:8080/user", {
+    if (!token || token.trim() === "") {
+      window.location.replace("/sign_in");
+      return;
+    }
+
+    fetch("http://localhost:8080/api/profile", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     })
-      .then((response) => response.json())
-      .then((user) => setUser(user));
+      .then((response) => {
+        switch (response.status) {
+          case 200:
+            response.json().then((user) => setUser(user));
+            break;
+          case 404:
+            response.json().then(() => {
+              localStorage.clear();
+              window.location.replace("/sign_in");
+            });
+
+            break;
+          default:
+            alert("ERROR!");
+        }
+      })
+      .catch((error) => alert(error));
   }, []);
 
   const signOut = () => {
-    fetch("http://localhost:8080/sign_out", {
+    fetch("http://localhost:8080/api/sign_out", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    }).then(() => saveToken(undefined));
+    })
+      .then((response) => {
+        switch (response.status) {
+          case 200:
+          case 404:
+            localStorage.removeItem("token");
+            window.location.replace("/sign_in");
+            break;
+          default:
+            alert("ERROR!");
+        }
+      })
+      .catch((error) => alert(error));
   };
 
   return (

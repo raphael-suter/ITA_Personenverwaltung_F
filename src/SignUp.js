@@ -2,29 +2,27 @@ import React, { useState } from "react";
 import { Alert, Button, Card, Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-const SignIn = () => {
+const SignUp = () => {
   const [error, setError] = useState("");
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [repPassword, setRepPassword] = useState("");
 
-  const signIn = () => {
-    fetch("http://localhost:8080/api/sign_in", {
+  const signUp = () => {
+    fetch("http://localhost:8080/api/sign_up", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ name, email, password, repPassword }),
     })
       .then((response) => {
         switch (response.status) {
           case 200:
-            response.json().then(({ token }) => {
-              localStorage.setItem("token", token);
-              window.location.replace("/");
-            });
-
+            window.location.replace("/sign_in");
             break;
-          case 404:
+          case 400:
             response.json().then(({ message }) => setError(message));
             break;
           default:
@@ -41,6 +39,14 @@ const SignIn = () => {
         <Form>
           <Form.Group>
             <Form.Control
+              type="text"
+              placeholder="Name"
+              value={name}
+              onChange={(evt) => setName(evt.target.value)}
+            />
+          </Form.Group>
+          <Form.Group>
+            <Form.Control
               type="email"
               placeholder="Email-Adresse"
               value={email}
@@ -55,12 +61,20 @@ const SignIn = () => {
               onChange={(evt) => setPassword(evt.target.value)}
             />
           </Form.Group>
+          <Form.Group>
+            <Form.Control
+              type="password"
+              placeholder="Passwort wiederholen"
+              value={repPassword}
+              onChange={(evt) => setRepPassword(evt.target.value)}
+            />
+          </Form.Group>
           <div className="d-flex align-items-center">
-            <Button variant="info" onClick={signIn}>
-              Sign In
-            </Button>
-            <Link to="/sign_up" className="ml-3">
+            <Button variant="info" onClick={signUp}>
               Sign Up
+            </Button>
+            <Link to="/sign_in" className="ml-3">
+              Sign In
             </Link>
           </div>
         </Form>
@@ -69,4 +83,4 @@ const SignIn = () => {
   );
 };
 
-export default SignIn;
+export default SignUp;
