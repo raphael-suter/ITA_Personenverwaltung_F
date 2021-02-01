@@ -33,7 +33,7 @@ const Profile = () => {
         }
       })
       .catch((error) => alert(error));
-  }, []);
+  }, [token]);
 
   const signOut = () => {
     fetch("http://localhost:8080/api/sign_out", {

@@ -31,7 +31,7 @@ const Verify = ({
         }
       })
       .catch((error) => alert(error));
-  }, []);
+  }, [token]);
 
   return <p>{message}</p>;
 };
