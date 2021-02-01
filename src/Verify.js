@@ -33,7 +33,7 @@ const Verify = ({
       .catch((error) => alert(error));
   }, [token]);
 
-  return <p>{message}</p>;
+  return <p className="m-3">{message}</p>;
 };
 
 export default Verify;
